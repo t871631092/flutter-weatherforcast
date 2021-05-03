@@ -52,6 +52,7 @@ class _ManagePage extends State<ManagePage> {
         ),
         //backgroundColor: Colors.transparent,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               color: Colors.white,
@@ -67,21 +68,32 @@ class _ManagePage extends State<ManagePage> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                  itemCount: widget._list.length,
-                  itemExtent: 50.0, //强制高度为50.0
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text("${widget._list[index]}"),
-                      trailing: TextButton(
-                        child: Text("删除"),
-                        onPressed: () {
-                          delete(widget._list[index]);
-                        },
-                      ),
-                    );
-                  }),
-            )
+                child: RefreshIndicator(
+                    child: ListView.builder(
+                        itemCount: widget._list.length,
+                        itemExtent: 50.0, //强制高度为50.0
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            title: Text("${widget._list[index]}"),
+                            trailing: TextButton(
+                              child: Text("删除"),
+                              onPressed: () {
+                                delete(widget._list[index]);
+                              },
+                            ),
+                          );
+                        }),
+                    onRefresh: () async {
+                      print("123");
+                    })),
+            Container(
+              padding: EdgeInsets.all(3),
+              height: 23,
+              child: Text(
+                "天气数据由心知天气提供",
+                style: TextStyle(fontSize: 11),
+              ),
+            ),
           ],
         ),
       );

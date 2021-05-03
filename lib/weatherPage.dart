@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class WeatherPage extends StatefulWidget {
   final location;
-  WeatherPage(this.location);
+  WeatherPage({Key key, String this.location}) : super(key: key);
 
   @override
   _WeatherPage createState() => _WeatherPage();
@@ -31,46 +31,62 @@ class _WeatherPage extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     if (isOK) {
-      return Container(
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              child: Center(
-                child: Text(isOK
-                    ? '${new DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(weatherData.data['last_update']))}'
-                    : ''),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: Text(isOK ? weatherData.data['location']['name'] : ''),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: Text(
-                    isOK ? '${weatherData.data['now']['temperature']}°' : ''),
-              ),
-            ),
-            Offstage(
-              offstage: !isOK,
-              child: Container(
-                child: Center(
-                    child: Image(
-                        image: AssetImage(isOK
-                            ? 'lib/assets/${weatherData.data['now']['code']}@2x.png'
-                            : 'lib/assets/99@2x.png'))),
-              ),
-            ),
-            Container(
-              child: Center(
-                child: Text(isOK ? '${weatherData.data['now']['text']}' : ''),
-              ),
-            )
-          ],
-        ),
-      ));
+      return RefreshIndicator(
+          onRefresh: () async {
+            ApiService.p(widget.location, (result) {
+              if (result != false) {
+                setState(() {
+                  weatherData.data = result;
+                  isOK = true;
+                });
+                print("refresh");
+              }
+            });
+          },
+          child: ListView(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    child: Center(
+                      child: Text(isOK
+                          ? '${new DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(weatherData.data['last_update']))}'
+                          : ''),
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                      child: Text(
+                          isOK ? weatherData.data['location']['name'] : ''),
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                      child: Text(isOK
+                          ? '${weatherData.data['now']['temperature']}°'
+                          : ''),
+                    ),
+                  ),
+                  Offstage(
+                    offstage: !isOK,
+                    child: Container(
+                      child: Center(
+                          child: Image(
+                              image: AssetImage(isOK
+                                  ? 'lib/assets/${weatherData.data['now']['code']}@2x.png'
+                                  : 'lib/assets/99@2x.png'))),
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                      child: Text(
+                          isOK ? '${weatherData.data['now']['text']}' : ''),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ));
     } else {
       return Container(
         child: Center(

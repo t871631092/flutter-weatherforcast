@@ -41,8 +41,8 @@ class _HomePageState extends State<HomePage> {
         _lenght = ['长沙', '北京'];
       }
       getlocation();
+      print(_lenght);
     });
-    print(_lenght);
   }
 
   @override
@@ -142,7 +142,11 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               children: <Widget>[
-                for (var i in _lenght) WeatherPage(i),
+                for (var i in _lenght)
+                  WeatherPage(
+                    key: Key(i),
+                    location: i,
+                  ),
                 ManagePage(this._add, this._remove, this._lenght),
               ],
             ),
