@@ -11,13 +11,15 @@ class ApiService {
           .then((value) => str = '${value.latitude}:${value.longitude}');
     }
     print(str);
-    var url = Uri.parse(
-        'https://api.seniverse.com/v3/weather/now.json?key=SPFqkJQtu37wAi0wV&location=$str');
-    http.get(url).then((value) {
+    var result;
+    await http
+        .get(Uri.parse(
+            'https://api.seniverse.com/v3/weather/now.json?key=SPFqkJQtu37wAi0wV&location=$str'))
+        .then((value) {
       print(value);
       if (value.statusCode == 200) {
-        data(JSON.jsonDecode(value.body)['results'][0]);
-        return JSON.jsonDecode(value.body)['results'][0];
+        print("123");
+        result = JSON.jsonDecode(value.body)['results'][0];
       } else {
         data(false);
         return false;
@@ -25,18 +27,77 @@ class ApiService {
     }).catchError((onError) {
       print("error");
     });
+    await http
+        .get(Uri.parse(
+            'https://api.seniverse.com/v3/weather/daily.json?key=SPFqkJQtu37wAi0wV&location=$str&language=zh-Hans&unit=c&start=0&days=5'))
+        .then((value) {
+      if (value.statusCode == 200) {
+        result['daily'] = JSON.jsonDecode(value.body)['results'][0]['daily'];
+      } else {
+        data(false);
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
+    await http
+        .get(Uri.parse(
+            'https://api.seniverse.com/v3/life/suggestion.json?key=SPFqkJQtu37wAi0wV&location=$str&language=zh-Hans'))
+        .then((value) {
+      if (value.statusCode == 200) {
+        result['suggestion'] =
+            JSON.jsonDecode(value.body)['results'][0]['suggestion'];
+      } else {
+        data(false);
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
+    print(result);
+    data([result]);
   }
 
   static void getNows(List<dynamic> locations, callback) async {
+    //实况
     List<http.Response> list = await Future.wait(locations.map((e) {
       return http.get(Uri.parse(
           'https://api.seniverse.com/v3/weather/now.json?key=SPFqkJQtu37wAi0wV&location=$e'));
+    }));
+    //预报
+    List<http.Response> list1 = await Future.wait(locations.map((e) {
+      return http.get(Uri.parse(
+          'https://api.seniverse.com/v3/weather/daily.json?key=SPFqkJQtu37wAi0wV&location=$e&language=zh-Hans&unit=c&start=0&days=5'));
+    }));
+    //生活
+    List<http.Response> list2 = await Future.wait(locations.map((e) {
+      return http.get(Uri.parse(
+          'https://api.seniverse.com/v3/life/suggestion.json?key=SPFqkJQtu37wAi0wV&location=$e&language=zh-Hans'));
     }));
     List<dynamic> results = [];
     print(list);
     list.forEach((element) {
       if (element.statusCode == 200) {
-        results.add(JSON.jsonDecode(element.body)['results'][0]);
+        var el = JSON.jsonDecode(element.body)['results'][0];
+        list1.forEach((element1) {
+          if (element1.statusCode == 200) {
+            var el1 = JSON.jsonDecode(element1.body)['results'][0];
+            if (element.statusCode == 200 &&
+                el1['location']['name'] == el['location']['name']) {
+              el['daily'] = el1['daily'];
+            }
+          }
+        });
+        list2.forEach((element2) {
+          if (element2.statusCode == 200) {
+            var el2 = JSON.jsonDecode(element2.body)['results'][0];
+            if (element.statusCode == 200 &&
+                el2['location']['name'] == el['location']['name']) {
+              el['suggestion'] = el2['suggestion'];
+            }
+          }
+        });
+        results.add(el);
       }
     });
     callback(results);
