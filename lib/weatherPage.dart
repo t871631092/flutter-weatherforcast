@@ -188,7 +188,7 @@ class _WeatherPage extends State<WeatherPage> {
                     //collapseMode: CollapseMode.parallax,
                     background: Container(
                         child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Center(
                             child: Text(
@@ -196,7 +196,8 @@ class _WeatherPage extends State<WeatherPage> {
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         )),
                         Padding(
-                          padding: EdgeInsets.only(left: 16, top: 5),
+                          padding:
+                              EdgeInsets.only(left: 16, top: 20, bottom: 15),
                           child: Center(
                               child: Text(
                             isOK ? '${widget.now['temperature']}°' : '',
@@ -206,9 +207,6 @@ class _WeatherPage extends State<WeatherPage> {
                       ],
                     )),
                   ),
-                  onStretchTrigger: () async {
-                    print("12312321312");
-                  },
                   backgroundColor: _gradientColor2,
                   elevation: 0,
                   expandedHeight: 180,
@@ -229,7 +227,7 @@ class _WeatherPage extends State<WeatherPage> {
                   Column(
                     children: [
                       Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 20),
+                          padding: EdgeInsets.only(top: 0, bottom: 20),
                           child: Column(
                             children: getDaily(widget.daily),
                           )),

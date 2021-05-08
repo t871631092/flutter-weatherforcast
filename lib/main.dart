@@ -1,18 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:weatherforcast/ApiService.dart';
 import 'package:weatherforcast/managePage.dart';
 import 'package:weatherforcast/weatherPage.dart';
 import 'dart:ui';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前
+  // MaterialApp组件会覆盖掉这个值。
+  SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light);
+  SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   static const Widget _home = HomePage();
   @override
   Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: _home,
       );
 }
@@ -150,81 +160,83 @@ class _HomePageState extends State<HomePage> {
           }
         });
       });
+
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQueryData.fromWindow(window).padding.top),
-        child: SafeArea(
-          top: true,
-          child: Offstage(),
-        ),
-      )
-      // actions: <Widget>[
-      //   Padding(
-      //     padding: const EdgeInsets.only(right: 20.0),
-      //     child: IconButton(
-      //       icon: const Icon(Icons.remove),
-      //       onPressed: _remove,
-      //     ),
-      //   ),
-      //   Padding(
-      //     padding: const EdgeInsets.only(right: 20.0),
-      //     child: IconButton(
-      //       icon: const Icon(Icons.add),
-      //       onPressed: _add,
-      //     ),
-      //   ),
-      // ],
-      ,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment(
-                1.5, 1.5), // 10% of the width, so there are ten blinds.
-            colors: [
-              const Color(0xFF41D8DD),
-              const Color(0xFF6CACFF)
-            ], // whitish to gray
-            tileMode: TileMode.repeated, // repeats the gradient over the canvas
+        // appBar: PreferredSize(
+        //   preferredSize:
+        //       Size.fromHeight(MediaQueryData.fromWindow(window).padding.top),
+        //   child: SafeArea(
+        //     top: true,
+        //     child: Offstage(),
+        //   ),
+        // ),
+        // actions: <Widget>[
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 20.0),
+        //     child: IconButton(
+        //       icon: const Icon(Icons.remove),
+        //       onPressed: _remove,
+        //     ),
+        //   ),
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 20.0),
+        //     child: IconButton(
+        //       icon: const Icon(Icons.add),
+        //       onPressed: _add,
+        //     ),
+        //   ),
+        // ],
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment(
+                  1.5, 1.5), // 10% of the width, so there are ten blinds.
+              colors: [
+                const Color(0xFF41D8DD),
+                const Color(0xFF6CACFF)
+              ], // whitish to gray
+              tileMode:
+                  TileMode.repeated, // repeats the gradient over the canvas
+            ),
+          ),
+          child: Stack(
+            children: [
+              PageView(
+                controller: _controller,
+                onPageChanged: (page) {
+                  setState(() {
+                    curPage = page;
+                  });
+                },
+                children: <Widget>[
+                  for (var i in wData)
+                    WeatherPage(
+                        key: Key(i['location']['name']),
+                        location: i['location']['name'],
+                        daily: i['daily'],
+                        suggestion: i['suggestion'],
+                        now: i['now'],
+                        refresh: _test),
+                  ManagePage(this._add, this._remove, this._lenght.value),
+                ],
+              ),
+              Positioned(
+                  bottom: 20,
+                  child: PageViewDotIndicator(
+                    currentItem: curPage,
+                    count: wData.length + 1,
+                    unselectedColor: Colors.black26,
+                    selectedColor: Colors.blue,
+                    duration: Duration(milliseconds: 200),
+                  ))
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 24),
+              //   child:
+              // ),
+            ],
           ),
         ),
-        child: Stack(
-          children: [
-            PageView(
-              controller: _controller,
-              onPageChanged: (page) {
-                setState(() {
-                  curPage = page;
-                });
-              },
-              children: <Widget>[
-                for (var i in wData)
-                  WeatherPage(
-                      key: Key(i['location']['name']),
-                      location: i['location']['name'],
-                      daily: i['daily'],
-                      suggestion: i['suggestion'],
-                      now: i['now'],
-                      refresh: _test),
-                ManagePage(this._add, this._remove, this._lenght.value),
-              ],
-            ),
-            Positioned(
-                bottom: 10,
-                child: PageViewDotIndicator(
-                  currentItem: curPage,
-                  count: wData.length + 1,
-                  unselectedColor: Colors.black26,
-                  selectedColor: Colors.blue,
-                  duration: Duration(milliseconds: 200),
-                ))
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 24),
-            //   child:
-            // ),
-          ],
-        ),
-      ));
+      );
 }
