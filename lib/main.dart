@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:weatherforcast/ApiService.dart';
-import 'package:weatherforcast/managePage.dart';
 import 'package:weatherforcast/weatherPage.dart';
 import 'dart:ui';
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 void main() {
   // 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前
@@ -39,6 +37,8 @@ class _HomePageState extends State<HomePage> {
   int curPage = 0;
   ValueNotifier<List<String>> _lenght = ValueNotifier([]);
   List<dynamic> wData = [];
+  int currdentData = 0;
+  bool isok = false;
   @override
   void initState() {
     super.initState();
@@ -66,6 +66,9 @@ class _HomePageState extends State<HomePage> {
       if (_lenght.value == null) {
         _lenght.value = ['长沙', '北京'];
       }
+      setState(() {
+        isok = true;
+      });
       getlocation();
       autoUpdate();
     });
@@ -161,82 +164,180 @@ class _HomePageState extends State<HomePage> {
         });
       });
 
+  List<Widget> getWidget() {
+    if (cityname == "") {
+      return [
+        Expanded(
+            child: RefreshIndicator(
+                child: ListView.builder(
+                    itemCount: this._lenght.value.length,
+                    itemExtent: 50.0, //强制高度为50.0
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text("${this._lenght.value[index]}"),
+                        onTap: () {
+                          setState(() {
+                            currdentData = index;
+                          });
+                        },
+                        trailing: TextButton(
+                          child: Text("删除"),
+                          onPressed: () {
+                            delete(this._lenght.value[index]);
+                          },
+                        ),
+                      );
+                    }),
+                onRefresh: () async {
+                  print("123");
+                }))
+      ];
+    } else {
+      return [
+        Expanded(
+            child: ListView(
+          children: [
+            for (var item in search_list)
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Container(
+                    height: 80,
+                    child: Center(
+                      child:
+                          Text('${item['name']}', textAlign: TextAlign.center),
+                    ),
+                  )),
+                  Expanded(
+                    child: TextButton(
+                      child: Text("添加"),
+                      onPressed: () {
+                        print('add0');
+                        add(item);
+                      },
+                    ),
+                  ),
+                ],
+              )
+          ],
+        ))
+      ];
+    }
+  }
+
+  List<dynamic> search_list = [];
+  String cityname = "";
+  void inputcity(String str) {
+    setState(() {
+      print(str);
+      cityname = str;
+    });
+    ApiService.searchLocation(str, (cb) {
+      setState(() {
+        search_list = cb;
+      });
+    });
+  }
+
+  TextEditingController tc1 = new TextEditingController();
+  void add(dynamic item) {
+    _add(item['name']);
+    setState(() {
+      cityname = "";
+      tc1.value = TextEditingValue.empty;
+      tc1.clear();
+    });
+  }
+
+  void delete(dynamic item) {
+    setState(() {
+      _remove(item);
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        // appBar: PreferredSize(
-        //   preferredSize:
-        //       Size.fromHeight(MediaQueryData.fromWindow(window).padding.top),
-        //   child: SafeArea(
-        //     top: true,
-        //     child: Offstage(),
-        //   ),
-        // ),
-        // actions: <Widget>[
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: IconButton(
-        //       icon: const Icon(Icons.remove),
-        //       onPressed: _remove,
-        //     ),
-        //   ),
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: IconButton(
-        //       icon: const Icon(Icons.add),
-        //       onPressed: _add,
-        //     ),
-        //   ),
-        // ],
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment(
-                  1.5, 1.5), // 10% of the width, so there are ten blinds.
-              colors: [
-                const Color(0xFF41D8DD),
-                const Color(0xFF6CACFF)
-              ], // whitish to gray
-              tileMode:
-                  TileMode.repeated, // repeats the gradient over the canvas
-            ),
+      appBar: AppBar(
+        title: wData.length > 0
+            ? Text(wData[currdentData]['location']['name'])
+            : Text('Loading'),
+        backgroundColor: Color(0xFFA16BFE),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment(
+                1.5, 1.5), // 10% of the width, so there are ten blinds.
+            colors: [
+              const Color(0xFFA16BFE),
+              const Color(0xFFBC3D2F)
+            ], // whitish to gray
+            tileMode: TileMode.repeated, // repeats the gradient over the canvas
           ),
-          child: Stack(
+        ),
+        child: Stack(
+          children: [
+            PageView(
+              controller: _controller,
+              onPageChanged: (page) {
+                setState(() {
+                  curPage = page;
+                });
+              },
+              children: <Widget>[
+                if (wData.length > 0)
+                  WeatherPage(
+                      key: Key(wData[currdentData]['location']['name']),
+                      location: wData[currdentData]['location']['name'],
+                      daily: wData[currdentData]['daily'],
+                      suggestion: wData[currdentData]['suggestion'],
+                      now: wData[currdentData]['now'],
+                      refresh: _test),
+              ],
+            ),
+          ],
+        ),
+      ),
+      drawer: Drawer(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("城市"),
+            backgroundColor: Color(0xFFA16BFE),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PageView(
-                controller: _controller,
-                onPageChanged: (page) {
-                  setState(() {
-                    curPage = page;
-                  });
-                },
-                children: <Widget>[
-                  for (var i in wData)
-                    WeatherPage(
-                        key: Key(i['location']['name']),
-                        location: i['location']['name'],
-                        daily: i['daily'],
-                        suggestion: i['suggestion'],
-                        now: i['now'],
-                        refresh: _test),
-                  ManagePage(this._add, this._remove, this._lenght.value),
-                ],
+              Container(
+                color: Colors.white,
+                margin: EdgeInsets.all(8),
+                height: 45,
+                child: Center(
+                  child: TextField(
+                    controller: tc1,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '城市名',
+                      suffix: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {},
+                      ),
+                    ),
+                    onChanged: inputcity,
+                  ),
+                ),
               ),
-              Positioned(
-                  bottom: 20,
-                  child: PageViewDotIndicator(
-                    currentItem: curPage,
-                    count: wData.length + 1,
-                    unselectedColor: Colors.black26,
-                    selectedColor: Colors.blue,
-                    duration: Duration(milliseconds: 200),
-                  ))
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 24),
-              //   child:
-              // ),
+              for (var item in getWidget()) item,
+              Container(
+                padding: EdgeInsets.all(3),
+                height: 23,
+                child: Text(
+                  "天气数据由心知天气提供",
+                  style: TextStyle(fontSize: 11),
+                ),
+              ),
             ],
           ),
         ),
-      );
+      ));
 }
