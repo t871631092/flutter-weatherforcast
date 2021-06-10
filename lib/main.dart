@@ -8,6 +8,9 @@ import 'package:weatherforcast/weatherPage.dart';
 import 'dart:ui';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
+//weatherforcast
+//write by kqq@papaz.me
+
 void main() {
   // 以下两行 设置android状态栏为透明的沉浸。写在组件渲染之后，是为了在渲染后进行set赋值，覆盖状态栏，写在渲染之前
   // MaterialApp组件会覆盖掉这个值。
@@ -105,7 +108,8 @@ class _HomePageState extends State<HomePage> {
         } else {
           setState(() {
             _lenght.value.insert(0, callback[0]['location']['name']);
-            curPage = 1;
+            wData.insert(0, callback[0]);
+            curPage = 0;
             setState(() {
               _controller.previousPage(
                   duration: Duration(seconds: 1), curve: Curves.easeIn);

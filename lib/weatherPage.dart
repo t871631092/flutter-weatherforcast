@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weatherforcast/Model.dart';
 
 class WeatherPage extends StatefulWidget {
   final String location;
@@ -24,7 +23,6 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPage extends State<WeatherPage> {
   bool isOK = true;
-  WeatherData weatherData = new WeatherData();
   void initState() {
     print("initState");
     print(widget.now);

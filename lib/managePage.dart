@@ -74,27 +74,33 @@ class _ManagePage extends State<ManagePage> {
       ];
     } else {
       return [
-        for (var item in search_list)
-          Row(
-            children: <Widget>[
-              Expanded(
-                  child: Container(
-                height: 80,
-                child: Center(
-                  child: Text('${item['name']}', textAlign: TextAlign.center),
-                ),
-              )),
-              Expanded(
-                child: TextButton(
-                  child: Text("添加"),
-                  onPressed: () {
-                    print('add0');
-                    add(item);
-                  },
-                ),
-              ),
-            ],
-          )
+        Expanded(
+            child: ListView(
+          children: [
+            for (var item in search_list)
+              Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Container(
+                    height: 80,
+                    child: Center(
+                      child:
+                          Text('${item['name']}', textAlign: TextAlign.center),
+                    ),
+                  )),
+                  Expanded(
+                    child: TextButton(
+                      child: Text("添加"),
+                      onPressed: () {
+                        print('add0');
+                        add(item);
+                      },
+                    ),
+                  ),
+                ],
+              )
+          ],
+        ))
       ];
     }
   }
