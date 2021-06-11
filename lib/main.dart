@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           });
         }
       });
-      if (_lenght.value == null) {
+      if (value == null) {
         _lenght.value = ['长沙', '北京'];
       }
       setState(() {
