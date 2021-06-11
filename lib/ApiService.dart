@@ -11,7 +11,6 @@ class ApiService {
       await ApiService.getLocation()
           .then((value) => str = '${value.latitude}:${value.longitude}');
     }
-    print(str);
     var result;
     await http
         .get(Uri.parse(
@@ -117,7 +116,6 @@ class ApiService {
   static Future<Position> getLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {

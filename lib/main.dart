@@ -59,14 +59,12 @@ class _HomePageState extends State<HomePage> {
       });
     });
     ApiService.getCity().then((value) {
-      setState(() {
-        if (value != null) {
-          setState(() {
-            _lenght.value = value;
-          });
-        }
-      });
-      if (_lenght.value == null) {
+      if (value != null) {
+        setState(() {
+          _lenght.value = value;
+        });
+      }
+      if (value == null) {
         _lenght.value = ['长沙', '北京'];
       }
       getlocation();
@@ -96,9 +94,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getlocation() async {
+    print("getlocation");
     String str;
-    await ApiService.getLocation()
-        .then((value) => str = '${value.latitude}:${value.longitude}');
+    await ApiService.getLocation().then((value) {
+      str = '${value.latitude}:${value.longitude}';
+      print("getlocation1" + str);
+    });
     ApiService.p(str, (List<dynamic> callback) {
       print("获取当前城市" + callback.toString());
       if (callback.length != 0) {
