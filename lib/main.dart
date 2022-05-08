@@ -169,30 +169,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        // appBar: PreferredSize(
-        //   preferredSize:
-        //       Size.fromHeight(MediaQueryData.fromWindow(window).padding.top),
-        //   child: SafeArea(
-        //     top: true,
-        //     child: Offstage(),
-        //   ),
-        // ),
-        // actions: <Widget>[
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: IconButton(
-        //       icon: const Icon(Icons.remove),
-        //       onPressed: _remove,
-        //     ),
-        //   ),
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: IconButton(
-        //       icon: const Icon(Icons.add),
-        //       onPressed: _add,
-        //     ),
-        //   ),
-        // ],
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -238,10 +214,6 @@ class _HomePageState extends State<HomePage> {
                     selectedColor: Colors.blue,
                     duration: Duration(milliseconds: 200),
                   ))
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 24),
-              //   child:
-              // ),
             ],
           ),
         ),

@@ -158,4 +158,17 @@ class ApiService {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getStringList('citys');
   }
+
+  static void login(username, password) async {
+    await http.post(Uri.parse('http://192.168.199.140:8088/account/login'),
+        body: {'username': username, 'password': password}).then((value) {
+      if (value.statusCode == 200) {
+        print(JSON.jsonDecode(value.body));
+      } else {
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
+  }
 }
