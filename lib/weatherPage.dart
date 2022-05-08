@@ -80,7 +80,10 @@ class _WeatherPage extends State<WeatherPage> {
               )),
           Expanded(
             flex: 1,
-            child: Text(''),
+            child: Text(
+                '下雨概率',
+              style: TextStyle(fontSize: 10),
+            ),
           ),
           Expanded(
               flex: 1,
