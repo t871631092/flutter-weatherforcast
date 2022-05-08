@@ -160,10 +160,52 @@ class ApiService {
   }
 
   static void login(username, password) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
     await http.post(Uri.parse('http://192.168.199.140:8088/account/login'),
-        body: {'username': username, 'password': password}).then((value) {
+        body: {'username': username, 'password': password},
+        headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
-        print(JSON.jsonDecode(value.body));
+        if (value.headers['set-cookie'] != null) {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          sharedPreferences.setString('cookie', value.headers['set-cookie']);
+        }
+        print(value.headers['set-cookie']);
+      } else {
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
+  }
+
+  static void register(username, password, nickname, email) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
+    await http.post(Uri.parse('http://192.168.199.140:8088/account/register'),
+        body: {
+          'username': username,
+          'password': password,
+          'email': email,
+          'nickname': nickname
+        },
+        headers: {
+          'Cookie': token
+        }).then((value) async {
+      if (value.statusCode == 200) {
+        if (value.headers['set-cookie'] != null) {
+          SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          sharedPreferences.setString('cookie', value.headers['set-cookie']);
+        }
+        print(value.headers['set-cookie']);
       } else {
         return false;
       }

@@ -202,14 +202,14 @@ class _HomePageState extends State<HomePage> {
                         now: i['now'],
                         refresh: _test),
                   ManagePage(this._add, this._remove, this._lenght.value),
-                  LoginPage()
+                  // LoginPage()
                 ],
               ),
               Positioned(
                   bottom: 20,
                   child: PageViewDotIndicator(
                     currentItem: curPage,
-                    count: wData.length + 2,
+                    count: wData.length + 1,
                     unselectedColor: Colors.black26,
                     selectedColor: Colors.blue,
                     duration: Duration(milliseconds: 200),

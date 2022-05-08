@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weatherforcast/ApiService.dart';
+import 'package:weatherforcast/loginPage.dart';
 
 class ManagePage extends StatefulWidget {
   final _add;
@@ -156,11 +157,15 @@ class _ManagePage extends State<ManagePage> {
         appBar: AppBar(
           title: Text("城市管理"),
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.shopping_cart),
-              tooltip: 'Open shopping cart',
+            ElevatedButton(
+              child: Text("登陆"),
               onPressed: () {
-                // handle the press
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return LoginPage();
+                  }),
+                );
               },
             ),
           ],
