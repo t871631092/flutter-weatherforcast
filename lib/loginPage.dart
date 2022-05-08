@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:weatherforcast/ApiService.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -180,8 +181,7 @@ class _LoginPageState extends State<LoginPage> {
           '注册',
         ),
         onPressed: () {
-          print(
-              'Login: username=${_username.trim()}, password=${_password.trim()}');
+          ApiService.login(_username.trim(), _password.trim());
         },
       ),
     );
