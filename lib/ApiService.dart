@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static String key = "SxytzgbMmIFfKL3Ck";
+  static String key = "SPFqkJQtu37wAi0wV"; //"SxytzgbMmIFfKL3Ck";
   ApiService();
   static dynamic p(str, data) async {
     if (str == 'here') {

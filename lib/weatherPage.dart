@@ -222,150 +222,146 @@ class _WeatherPage extends State<WeatherPage> {
               },
               child: ListView(
                 children: [
-                  Column(
-                    children: [
-                      Container(
-                          padding: EdgeInsets.only(top: 0, bottom: 20),
-                          child: Column(
-                            children: getDaily(widget.daily),
-                          )),
-                      Divider(
-                        height: 1.0,
-                        color: Colors.black,
-                      ),
-                      Container(
-                        height: 25,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text("穿衣"),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text("紫外线强度"),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['dressing']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['uv']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.0,
-                        color: Colors.black,
-                      ),
-                      Container(
-                        height: 25,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text("洗车"),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text("旅游"),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['car_washing']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['travel']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.0,
-                        color: Colors.black,
-                      ),
-                      Container(
-                        height: 25,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text("感冒"),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text("运动"),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['flu']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                            Expanded(
-                                child: Center(
-                              child: Text(
-                                "${widget.suggestion['sport']['brief']}",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.0,
-                        color: Colors.black,
-                      ),
-                      Container(
-                        height: 30,
-                        child: Center(
-                          child: Text('天气数据由心知天气提供'),
-                        ),
-                      )
-                    ],
+                  Container(
+                      padding: EdgeInsets.only(top: 0, bottom: 20),
+                      child: Column(
+                        children: getDaily(widget.daily),
+                      )),
+                  Divider(
+                    height: 1.0,
+                    color: Colors.black,
+                  ),
+                  Container(
+                    height: 25,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text("穿衣"),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text("紫外线强度"),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['dressing']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['uv']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1.0,
+                    color: Colors.black,
+                  ),
+                  Container(
+                    height: 25,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text("洗车"),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text("旅游"),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['car_washing']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['travel']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1.0,
+                    color: Colors.black,
+                  ),
+                  Container(
+                    height: 25,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text("感冒"),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text("运动"),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['flu']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                        Expanded(
+                            child: Center(
+                          child: Text(
+                            "${widget.suggestion['sport']['brief']}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1.0,
+                    color: Colors.black,
+                  ),
+                  Container(
+                    height: 30,
+                    child: Center(
+                      child: Text('天气数据由心知天气提供'),
+                    ),
                   )
                 ],
               ),

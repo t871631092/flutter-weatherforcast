@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:weatherforcast/ApiService.dart';
+import 'package:weatherforcast/loginPage.dart';
 import 'package:weatherforcast/managePage.dart';
 import 'package:weatherforcast/weatherPage.dart';
 import 'dart:ui';
@@ -225,13 +226,14 @@ class _HomePageState extends State<HomePage> {
                         now: i['now'],
                         refresh: _test),
                   ManagePage(this._add, this._remove, this._lenght.value),
+                  LoginPage()
                 ],
               ),
               Positioned(
                   bottom: 20,
                   child: PageViewDotIndicator(
                     currentItem: curPage,
-                    count: wData.length + 1,
+                    count: wData.length + 2,
                     unselectedColor: Colors.black26,
                     selectedColor: Colors.blue,
                     duration: Duration(milliseconds: 200),
