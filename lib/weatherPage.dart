@@ -147,7 +147,9 @@ class _WeatherPage extends State<WeatherPage> {
                 )),
             Expanded(
               flex: 1,
-              child: Text(i['precip'] == "" ? '' : '${i['precip']}%'),
+              child: Text(i['precip'] == ""
+                  ? ''
+                  : '${(double.parse(i['precip']) * 100).toStringAsFixed(0)}%'),
             ),
             Expanded(
                 flex: 1,

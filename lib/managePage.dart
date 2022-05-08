@@ -155,8 +155,16 @@ class _ManagePage extends State<ManagePage> {
       return Scaffold(
         appBar: AppBar(
           title: Text("城市管理"),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              tooltip: 'Open shopping cart',
+              onPressed: () {
+                // handle the press
+              },
+            ),
+          ],
         ),
-        //backgroundColor: Colors.transparent,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
