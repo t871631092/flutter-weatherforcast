@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static String key = "SPFqkJQtu37wAi0wV"; //"SxytzgbMmIFfKL3Ck";
+  static String key = "S6pTS6PlJWjLCRroi"; //"SxytzgbMmIFfKL3Ck";
   ApiService();
   static dynamic p(str, data) async {
     if (str == 'here') {
@@ -183,32 +184,20 @@ class ApiService {
     });
   }
 
-  static void register(username, password, nickname, email) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var token = '';
-    if (sharedPreferences.containsKey('cookie')) {
-      token = sharedPreferences.getString('cookie');
-    }
+  static void register(content, username, password, nickname, email) async {
+    print(username + password + nickname + email);
     await http.post(Uri.parse('http://192.168.199.140:8088/account/register'),
         body: {
           'username': username,
           'password': password,
           'email': email,
           'nickname': nickname
-        },
-        headers: {
-          'Cookie': token
         }).then((value) async {
       if (value.statusCode == 200) {
-        if (value.headers['set-cookie'] != null) {
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          sharedPreferences.setString('cookie', value.headers['set-cookie']);
-        }
-        print(value.headers['set-cookie']);
-      } else {
-        return false;
-      }
+        if (JSON.jsonDecode(value.body)['success']) {
+          Navigator.pop(content);
+        } else {}
+      } else {}
     }).catchError((onError) {
       print("error");
     });

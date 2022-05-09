@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:weatherforcast/ApiService.dart';
+import 'package:weatherforcast/RegisterPage.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -19,63 +20,29 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('注册'),
+        title: Text('登陆'),
         brightness: Brightness.dark,
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // _getRoundImage('images/logo.png', 100.0),
-            SizedBox(
-              height: 60,
-            ),
-            _getMailInput(),
-            _getUsernameInput(),
-            _getPasswordInput(),
-            SizedBox(
-              height: 10,
-            ),
-            _getLoginButton(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _getMailInput() {
-    return _getInputTextField(
-      TextInputType.text,
-      controller: _usernameController,
-      decoration: InputDecoration(
-        hintText: "输入邮箱",
-        icon: Icon(
-          Icons.mobile_friendly_rounded,
-          size: 20.0,
-        ),
-        border: InputBorder.none,
-        //使用 GestureDetector 实现手势识别
-        suffixIcon: GestureDetector(
-          child: Offstage(
-            child: Icon(Icons.clear),
-            offstage: _username == '',
+      body: new SingleChildScrollView(
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // _getRoundImage('images/logo.png', 100.0),
+              SizedBox(
+                height: 60,
+              ),
+              _getUsernameInput(),
+              _getPasswordInput(),
+              SizedBox(
+                height: 10,
+              ),
+              _getLoginButton(), _getRegisterButton()
+            ],
           ),
-          //点击清除文本框内容
-          onTap: () {
-            this.setState(() {
-              _username = '';
-              _usernameController.clear();
-            });
-          },
         ),
       ),
-      //使用 onChanged 完成双向绑定
-      onChanged: (value) {
-        this.setState(() {
-          _username = value;
-        });
-      },
     );
   }
 
@@ -178,10 +145,40 @@ class _LoginPageState extends State<LoginPage> {
               MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
         ),
         child: Text(
-          '注册',
+          '登陆',
         ),
         onPressed: () {
           ApiService.login(_username.trim(), _password.trim());
+        },
+      ),
+    );
+  }
+
+  Widget _getRegisterButton() {
+    return Container(
+      height: 50,
+      width: double.infinity,
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: TextButton(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+        ),
+        child: Text(
+          '注册',
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return RegisterPage();
+            }),
+          );
         },
       ),
     );

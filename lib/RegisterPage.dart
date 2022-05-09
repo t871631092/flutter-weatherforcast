@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:weatherforcast/ApiService.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  RegisterPage({Key key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   //TextEditingController可以使用 text 属性指定初始值
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  String _username = '', _password = '';
+  TextEditingController _emailController = TextEditingController();
+  String _username = '', _password = '', _email = '';
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +23,25 @@ class _LoginPageState extends State<LoginPage> {
         title: Text('注册'),
         brightness: Brightness.dark,
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // _getRoundImage('images/logo.png', 100.0),
-            SizedBox(
-              height: 60,
-            ),
-            _getMailInput(),
-            _getUsernameInput(),
-            _getPasswordInput(),
-            SizedBox(
-              height: 10,
-            ),
-            _getLoginButton(),
-          ],
+      body: new SingleChildScrollView(
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // _getRoundImage('images/logo.png', 100.0),
+              SizedBox(
+                height: 60,
+              ),
+              _getMailInput(),
+              _getUsernameInput(),
+              _getPasswordInput(),
+              SizedBox(
+                height: 10,
+              ),
+              _getLoginButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -47,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _getMailInput() {
     return _getInputTextField(
       TextInputType.text,
-      controller: _usernameController,
+      controller: _emailController,
       decoration: InputDecoration(
         hintText: "输入邮箱",
         icon: Icon(
@@ -59,13 +62,13 @@ class _LoginPageState extends State<LoginPage> {
         suffixIcon: GestureDetector(
           child: Offstage(
             child: Icon(Icons.clear),
-            offstage: _username == '',
+            offstage: _email == '',
           ),
           //点击清除文本框内容
           onTap: () {
             this.setState(() {
-              _username = '';
-              _usernameController.clear();
+              _email = '';
+              _emailController.clear();
             });
           },
         ),
@@ -73,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
       //使用 onChanged 完成双向绑定
       onChanged: (value) {
         this.setState(() {
-          _username = value;
+          _email = value;
         });
       },
     );
@@ -181,7 +184,8 @@ class _LoginPageState extends State<LoginPage> {
           '注册',
         ),
         onPressed: () {
-          ApiService.login(_username.trim(), _password.trim());
+          ApiService.register(context, _username.trim(), _password.trim(),
+              _username.trim(), _email.trim());
         },
       ),
     );
