@@ -153,11 +153,17 @@ class ApiService {
   static void saveCity(strs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('citys', strs);
+    ApiService.saveaddress();
   }
 
   static Future<List<String>> getCity() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getStringList('citys');
+    if (sharedPreferences.containsKey('cookie')) {
+      await ApiService.islogin();
+      return sharedPreferences.getStringList('citys');
+    } else {
+      return sharedPreferences.getStringList('citys');
+    }
   }
 
   static void login(username, password) async {
@@ -184,6 +190,56 @@ class ApiService {
     });
   }
 
+  static Future<List<String>> islogin() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
+    await http.get(Uri.parse('http://192.168.199.140:8088/account/islogin'),
+        headers: {'Cookie': token}).then((value) async {
+      if (value.statusCode == 200) {
+        var result = JSON.jsonDecode(value.body);
+        print(result['data']['locations']);
+        if (result['success']) {
+          sharedPreferences.setStringList('citys', result['data']['locations']);
+          sharedPreferences.setString('nickname', result['data']['nickname']);
+        } else {
+          sharedPreferences.remove('cookie');
+          sharedPreferences.remove('nickname');
+        }
+        return result['data']['locations'];
+      } else {
+        return [];
+      }
+    }).catchError((onError) {
+      print("error");
+      return [];
+    });
+  }
+
+  static void logout() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
+    await http.get(Uri.parse('http://192.168.199.140:8088/account/logout'),
+        headers: {'Cookie': token}).then((value) async {
+      if (value.statusCode == 200) {
+        var result = JSON.jsonDecode(value.body);
+        if (result['success']) {
+          sharedPreferences.remove('cookie');
+          sharedPreferences.remove('nickname');
+        } else {}
+      } else {
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
+  }
+
   static void register(content, username, password, nickname, email) async {
     print(username + password + nickname + email);
     await http.post(Uri.parse('http://192.168.199.140:8088/account/register'),
@@ -198,6 +254,36 @@ class ApiService {
           Navigator.pop(content);
         } else {}
       } else {}
+    }).catchError((onError) {
+      print("error");
+    });
+  }
+
+  static void saveaddress() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
+    var a = sharedPreferences.get('citys');
+    var city = '';
+    (a as List).forEach((e) {
+      if (city == '') {
+        city = e;
+      } else {
+        city += ",";
+        city += e;
+      }
+    });
+    await http.post(
+        Uri.parse('http://192.168.199.140:8088/account/saveaddress'),
+        body: {'locations': city},
+        headers: {'Cookie': token}).then((value) async {
+      if (value.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     }).catchError((onError) {
       print("error");
     });

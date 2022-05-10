@@ -18,6 +18,7 @@ class _ManagePage extends State<ManagePage> {
     ApiService.getNows(widget._list, (cb) {
       print(cb);
     });
+    ApiService.islogin();
   }
 
   List<dynamic> search_list = [];
