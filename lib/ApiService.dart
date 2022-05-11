@@ -57,10 +57,10 @@ class ApiService {
     });
     await http
         .get(Uri.parse(
-        'https://api.seniverse.com/v3/weather/hourly.json?key=$key&location=$str&language=zh-Hans&unit=c&start=0&hours=24'))
+            'https://api.seniverse.com/v3/weather/hourly.json?key=$key&location=$str&language=zh-Hans&unit=c&start=0&hours=24'))
         .then((value) {
       if (value.statusCode == 200) {
-        result['hourly'] = JSON.jsonDecode(value.body)['hourly'];
+        result['hourly'] = JSON.jsonDecode(value.body)['results'][0]['hourly'];
       } else {
         data(false);
         return false;
@@ -68,7 +68,6 @@ class ApiService {
     }).catchError((onError) {
       print("error");
     });
-    print(result);
     data([result]);
   }
 

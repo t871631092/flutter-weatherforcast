@@ -178,16 +178,17 @@ class _WeatherPage extends State<WeatherPage> {
 
   List<Widget> _build24h(data) {
     List<Widget> list = [];
+    if (data == null) {
+      return [];
+    }
     for (var item in data) {
-      print(item);
       list.add(Container(
         height: 45,
         width: 50,
         child: Flex(
           direction: Axis.vertical,
           children: [
-            Text(
-                '${new DateFormat('H').format(DateTime.parse(item['time'].toString().replaceAll('+08:00', '')))}'),
+            Text('${item['time'].toString().substring(11, 13)}'),
             Image(
                 width: 25,
                 height: 25,

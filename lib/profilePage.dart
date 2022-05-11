@@ -4,7 +4,6 @@ import 'package:weatherforcast/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weatherforcast/editPasswordPage.dart';
 
-
 class profilePage extends StatefulWidget {
   profilePage({Key key}) : super(key: key);
 
@@ -13,8 +12,6 @@ class profilePage extends StatefulWidget {
 }
 
 class _profilePageState extends State<profilePage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,9 +25,13 @@ class _profilePageState extends State<profilePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 30,),
+              SizedBox(
+                height: 30,
+              ),
               _buildAvatar(),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               _buildUsername(),
               SizedBox(
                 height: 60,
@@ -46,7 +47,7 @@ class _profilePageState extends State<profilePage> {
 
   Widget _buildAvatar() {
     return new CircleAvatar(
-      backgroundImage: AssetImage('lib/assets/defaultUserAvatar.png'),
+      // backgroundImage: AssetImage('lib/assets/defaultUserAvatar.png'),
       radius: 60.0,
     );
   }
@@ -58,12 +59,10 @@ class _profilePageState extends State<profilePage> {
         username = value;
       }
     });
-    return Text(
-      username,
-      style: TextStyle(
-        fontSize: 35,
-      )
-    );
+    return Text(username,
+        style: TextStyle(
+          fontSize: 35,
+        ));
   }
 
   Widget _buildEditPasswordButton() {
@@ -79,7 +78,7 @@ class _profilePageState extends State<profilePage> {
         style: ButtonStyle(
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           backgroundColor:
-          MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+              MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
         ),
         child: Text(
           '编辑密码',
@@ -109,7 +108,7 @@ class _profilePageState extends State<profilePage> {
         style: ButtonStyle(
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           backgroundColor:
-          MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+              MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
         ),
         child: Text(
           '登出',
@@ -126,5 +125,4 @@ class _profilePageState extends State<profilePage> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getString('nickname');
   }
-
 }

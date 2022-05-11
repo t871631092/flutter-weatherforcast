@@ -153,7 +153,6 @@ class _HomePageState extends State<HomePage> {
         wData.forEach((element) {
           if (element['location']['name'] == string) {
             ApiService.p(string, (result) {
-              print("789");
               if (result != false) {
                 setState(() {
                   element['now'] = result[0]['now'];
