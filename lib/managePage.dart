@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:weatherforcast/ApiService.dart';
 import 'package:weatherforcast/loginPage.dart';
+import 'package:weatherforcast/profilePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ManagePage extends StatefulWidget {
   final _add;
@@ -158,17 +161,7 @@ class _ManagePage extends State<ManagePage> {
         appBar: AppBar(
           title: Text("城市管理"),
           actions: <Widget>[
-            ElevatedButton(
-              child: Text("登陆"),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return LoginPage();
-                  }),
-                );
-              },
-            ),
+            _buildBarButton(),
           ],
         ),
         body: Column(
@@ -278,5 +271,40 @@ class _ManagePage extends State<ManagePage> {
         )),
       );
     }
+  }
+
+  Widget _buildBarButton() {
+    bool isLogin = true;
+    checkIsLogin().then((value) => isLogin = value);
+    if (isLogin) {
+      return ElevatedButton(
+        child: Text("用户"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return profilePage();
+            }),
+          );
+        },
+      );
+    } else {
+      return ElevatedButton(
+        child: Text("登陆"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return LoginPage();
+            }),
+          );
+        },
+      );
+    }
+  }
+
+  Future<bool> checkIsLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('nickname') != null;
   }
 }

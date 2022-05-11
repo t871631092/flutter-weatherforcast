@@ -219,6 +219,7 @@ class ApiService {
   }
 
   static void logout() async {
+    print("api.logout()");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = '';
     if (sharedPreferences.containsKey('cookie')) {
@@ -236,7 +237,7 @@ class ApiService {
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      print("logout error");
     });
   }
 
