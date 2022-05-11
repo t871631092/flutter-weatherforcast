@@ -273,8 +273,8 @@ class _WeatherPage extends State<WeatherPage> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Container(
-                      width: 1500,
-                      height: 280,
+                      width: 1200,
+                      height: 230,
                       child: tempChart(data: widget.hourly),
                     )
                   ),

@@ -35,7 +35,7 @@ class _tempChartState extends State<tempChart> {
             ),
             child: Padding(
               padding: const EdgeInsets.only(
-                  right: 18.0, left: 12.0, top: 24, bottom: 12),
+                  right: 20.0, left: 20.0),
               child: LineChart(
                 mainData(),
               ),
@@ -47,24 +47,13 @@ class _tempChartState extends State<tempChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff68737d),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    var first = widget.data[0]['time'].substring(11,13);
     int index = value.toInt();
-    var realHour = index + int.parse(first);
-    realHour = realHour % 24;
-    index = index % 24;
     var item = widget.data[index];
     const isOK = true;
-    print(item);
 
     Widget w = Flex(
       direction: Axis.vertical,
       children: [
-        Text(realHour.toString(), style: style),
         Text('${item['temperature']}°'),
         Image(
             width: 25,
@@ -73,6 +62,7 @@ class _tempChartState extends State<tempChart> {
                 ? 'lib/assets/${item['code']}@2x.png'
                 : 'lib/assets/99@2x.png')
         ),
+        SizedBox(height: 10),
         Text('${item['text']} '),
       ],
     );
@@ -81,6 +71,21 @@ class _tempChartState extends State<tempChart> {
       child: w,
       height: 300,
     );
+  }
+
+  Widget topTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    );
+    var first = widget.data[0]['time'].substring(11,13);
+    int index = value.toInt();
+    var realHour = index + int.parse(first);
+    realHour = realHour % 24;
+
+    Widget t = Text(realHour.toString() + ':00', style: style);
+
+    return Padding(padding: EdgeInsets.only(bottom: 4), child: t);
   }
 
   LineChartData mainData() {
@@ -93,11 +98,16 @@ class _tempChartState extends State<tempChart> {
         rightTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 23,
+              interval: 1,
+              getTitlesWidget: topTitleWidgets,
+          ),
         ),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -111,10 +121,8 @@ class _tempChartState extends State<tempChart> {
       borderData: FlBorderData(
           show: false,
       ),
-      minX: 0,
-      maxX: 25,
-      minY: 5,
-      maxY: 22,
+      maxY: double.parse(widget.data.reduce((a, b) => int.parse(a['temperature']) > int.parse(b['temperature']) ? a : b)['temperature']) + 2,
+      minY: double.parse(widget.data.reduce((a, b) => int.parse(a['temperature']) < int.parse(b['temperature']) ? a : b)['temperature']) - 2,
       lineBarsData: [
         LineChartBarData(
           spots: _buildFlSpot(widget.data),
