@@ -8,13 +8,16 @@ class WeatherPage extends StatefulWidget {
   final dynamic refresh;
   final dynamic daily;
   final dynamic suggestion;
+  final dynamic hourly;
+
   WeatherPage(
       {Key key,
       this.location,
       this.now,
       this.refresh,
       this.daily,
-      this.suggestion})
+      this.suggestion,
+      this.hourly})
       : super(key: key);
 
   @override
@@ -23,6 +26,7 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPage extends State<WeatherPage> {
   bool isOK = true;
+
   void initState() {
     print("initState");
     print(widget.now);
@@ -33,6 +37,7 @@ class _WeatherPage extends State<WeatherPage> {
 
   var _gradientColor2 = Colors.blue[600].withOpacity(0);
   ScrollController _scrollViewController;
+
   void changeColor() {
     if (_scrollViewController.offset == 0) {
       setState(() {
@@ -81,7 +86,7 @@ class _WeatherPage extends State<WeatherPage> {
           Expanded(
             flex: 1,
             child: Text(
-                '下雨概率',
+              '下雨概率',
               style: TextStyle(fontSize: 10),
             ),
           ),
@@ -171,6 +176,34 @@ class _WeatherPage extends State<WeatherPage> {
     return list;
   }
 
+  List<Widget> _build24h(data) {
+    List<Widget> list = [];
+    for (var item in data) {
+      print(item);
+      list.add(Container(
+        height: 45,
+        width: 50,
+        child: Flex(
+          direction: Axis.vertical,
+          children: [
+            Text('${new DateFormat('H').format(DateTime.parse(item['time']).toLocal())}'),
+            Image(
+              width: 25,
+              height: 25,
+              image: AssetImage(isOK
+                  ? 'lib/assets/${item['code']}@2x.png'
+                  : 'lib/assets/99@2x.png')
+            ),
+            Text('${item['temperature']}°'),
+            Text('${item['text']} '),
+          ],
+        ),
+      ));
+    }
+
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isOK) {
@@ -227,6 +260,13 @@ class _WeatherPage extends State<WeatherPage> {
               },
               child: ListView(
                 children: [
+                  Container(
+                      padding: EdgeInsets.only(top: 0, bottom: 20),
+                      height: 100,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: _build24h(widget.hourly),
+                  )),
                   Container(
                       padding: EdgeInsets.only(top: 0, bottom: 20),
                       child: Column(

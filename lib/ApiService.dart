@@ -55,6 +55,19 @@ class ApiService {
     }).catchError((onError) {
       print("error");
     });
+    await http
+        .get(Uri.parse(
+        'https://api.seniverse.com/v3/weather/hourly.json?key=$key&location=$str&language=zh-Hans&unit=c&start=0&hours=24'))
+        .then((value) {
+      if (value.statusCode == 200) {
+        result['hourly'] = JSON.jsonDecode(value.body)['hourly'];
+      } else {
+        data(false);
+        return false;
+      }
+    }).catchError((onError) {
+      print("error");
+    });
     print(result);
     data([result]);
   }
@@ -74,6 +87,11 @@ class ApiService {
     List<http.Response> list2 = await Future.wait(locations.map((e) {
       return http.get(Uri.parse(
           'https://api.seniverse.com/v3/life/suggestion.json?key=$key&location=$e&language=zh-Hans'));
+    }));
+    // 24 hours
+    List<http.Response> list3 = await Future.wait(locations.map((e) {
+      return http.get(Uri.parse(
+          'https://api.seniverse.com/v3/weather/hourly.json?key=$key&location=$e&language=zh-Hans&unit=c&start=0&hours=24'));
     }));
     List<dynamic> results = [];
     print(list);
@@ -95,6 +113,15 @@ class ApiService {
             if (element.statusCode == 200 &&
                 el2['location']['name'] == el['location']['name']) {
               el['suggestion'] = el2['suggestion'];
+            }
+          }
+        });
+        list3.forEach((element3) {
+          if (element3.statusCode == 200) {
+            var el3 = JSON.jsonDecode(element3.body)['results'][0];
+            if (element.statusCode == 200 &&
+                el3['location']['name'] == el['location']['name']) {
+              el['hourly'] = el3['hourly'];
             }
           }
         });

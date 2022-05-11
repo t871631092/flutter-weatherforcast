@@ -159,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                   element['now'] = result[0]['now'];
                   element['daily'] = result[0]['daily'];
                   element['suggestion'] = result[0]['suggestion'];
+                  element['hourly'] = result[0]['hourly'];
                 });
                 print(result);
               }
@@ -200,6 +201,7 @@ class _HomePageState extends State<HomePage> {
                         daily: i['daily'],
                         suggestion: i['suggestion'],
                         now: i['now'],
+                        hourly: i['hourly'],
                         refresh: _test),
                   ManagePage(this._add, this._remove, this._lenght.value),
                   // LoginPage()
