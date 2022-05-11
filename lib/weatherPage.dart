@@ -186,14 +186,14 @@ class _WeatherPage extends State<WeatherPage> {
         child: Flex(
           direction: Axis.vertical,
           children: [
-            Text('${new DateFormat('H').format(DateTime.parse(item['time']).toLocal())}'),
+            Text(
+                '${new DateFormat('H').format(DateTime.parse(item['time'].toString().replaceAll('+08:00', '')))}'),
             Image(
-              width: 25,
-              height: 25,
-              image: AssetImage(isOK
-                  ? 'lib/assets/${item['code']}@2x.png'
-                  : 'lib/assets/99@2x.png')
-            ),
+                width: 25,
+                height: 25,
+                image: AssetImage(isOK
+                    ? 'lib/assets/${item['code']}@2x.png'
+                    : 'lib/assets/99@2x.png')),
             Text('${item['temperature']}°'),
             Text('${item['text']} '),
           ],
@@ -266,7 +266,7 @@ class _WeatherPage extends State<WeatherPage> {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: _build24h(widget.hourly),
-                  )),
+                      )),
                   Container(
                       padding: EdgeInsets.only(top: 0, bottom: 20),
                       child: Column(
