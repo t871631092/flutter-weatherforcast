@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'widget/tempChart.dart';
 
 class WeatherPage extends StatefulWidget {
   final String location;
@@ -260,13 +262,23 @@ class _WeatherPage extends State<WeatherPage> {
               },
               child: ListView(
                 children: [
-                  Container(
-                      padding: EdgeInsets.only(top: 0, bottom: 20),
-                      height: 100,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: _build24h(widget.hourly),
-                  )),
+                  // Container(
+                  //     padding: EdgeInsets.only(top: 0, bottom: 20),
+                  //     height: 100,
+                  //     child: ListView(
+                  //       scrollDirection: Axis.horizontal,
+                  //       children: _build24h(widget.hourly),
+                  //     )
+                  // ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: 1500,
+                      height: 280,
+                      child: tempChart(data: widget.hourly),
+                    )
+                  ),
+                  // tempChart(),
                   Container(
                       padding: EdgeInsets.only(top: 0, bottom: 20),
                       child: Column(
