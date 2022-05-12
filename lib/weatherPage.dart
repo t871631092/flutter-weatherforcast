@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'widget/tempChart.dart';
 
 class WeatherPage extends StatefulWidget {
   final String location;
@@ -277,10 +275,10 @@ class _WeatherPage extends State<WeatherPage> {
                         ],
                         borderRadius: new BorderRadius.circular((5.0)),
                       ),
-                      margin:
-                          EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
-                      padding:
-                          EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+                      margin: EdgeInsets.only(
+                          top: 5, bottom: 5, left: 10, right: 10),
+                      padding: EdgeInsets.only(
+                          top: 10, bottom: 5, left: 5, right: 5),
                       height: 120,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
@@ -306,7 +304,7 @@ class _WeatherPage extends State<WeatherPage> {
                         borderRadius: new BorderRadius.circular((5.0)),
                       ),
                       margin: EdgeInsets.only(
-                          top: 5, bottom: 20, left: 5, right: 5),
+                          top: 5, bottom: 20, left: 10, right: 10),
                       padding:
                           EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
                       child: Column(

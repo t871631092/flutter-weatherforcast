@@ -1,5 +1,5 @@
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 import 'package:geolocator/geolocator.dart';
@@ -200,12 +200,13 @@ class ApiService {
       if (value.statusCode == 200) {
         if (value.headers['set-cookie'] != null) {
           var result = JSON.jsonDecode(value.body);
+          print(result);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString('cookie', value.headers['set-cookie']);
           if ((result['data']['locations'] as List).isNotEmpty) {
             sharedPreferences.setStringList(
-                'citys', result['data']['locations']);
+                'citys', result['data']['locations'].cast<String>());
           }
           sharedPreferences.setString('nickname', result['data']['nickname']);
           print('login成功');
@@ -216,11 +217,11 @@ class ApiService {
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      print("error login");
     });
   }
 
-  static Future<List<String>> islogin() async {
+  static Future<bool> islogin() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = '';
     if (sharedPreferences.containsKey('cookie')) {
@@ -232,20 +233,23 @@ class ApiService {
         var result = JSON.jsonDecode(value.body);
         print(result['data']['locations']);
         if (result['success']) {
-          sharedPreferences.setStringList('citys', result['data']['locations']);
+          if ((result['data']['locations'] as List).isNotEmpty) {
+            sharedPreferences.setStringList(
+                'citys', (result['data']['locations'].cast<String>()));
+          }
           sharedPreferences.setString('nickname', result['data']['nickname']);
+          return true;
         } else {
           sharedPreferences.remove('cookie');
           sharedPreferences.remove('nickname');
         }
-        return result['data']['locations'];
-      } else {
-        return [];
       }
     }).catchError((onError) {
-      print("error");
-      return [];
+      print("error islogin");
+      print(onError);
+      return false;
     });
+    return false;
   }
 
   static void logout() async {
@@ -320,6 +324,35 @@ class ApiService {
       } else {
         return false;
       }
+    }).catchError((onError) {
+      print("error");
+    });
+  }
+
+  static void changepw(content, old, pw) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var token = '';
+    if (sharedPreferences.containsKey('cookie')) {
+      token = sharedPreferences.getString('cookie');
+    }
+    await http.post(
+        Uri.parse('http://192.168.199.140:8088/account/changepassword'),
+        body: {'old': old, 'pw': pw},
+        headers: {'Cookie': token}).then((value) async {
+      if (value.statusCode == 200) {
+        if (JSON.jsonDecode(value.body)['success']) {
+          Navigator.pop(content);
+        } else {
+          Fluttertoast.showToast(
+              msg: "提示信息",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } else {}
     }).catchError((onError) {
       print("error");
     });

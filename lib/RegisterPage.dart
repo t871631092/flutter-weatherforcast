@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _getUsernameInput() {
     return _getInputTextField(
-      TextInputType.number,
+      TextInputType.text,
       controller: _usernameController,
       decoration: InputDecoration(
         hintText: "输入用户名",
