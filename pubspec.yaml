@@ -36,6 +36,7 @@ dependencies:
   geolocator: ^7.0.3
   shared_preferences: ^2.0.5
   event_bus: 2.0.0
+  fl_chart: ^0.50.1
 
 dev_dependencies:
   flutter_test:
