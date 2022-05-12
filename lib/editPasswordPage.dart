@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:via_logger/logger.dart';
 import 'package:weatherforcast/ApiService.dart';
 
 class editPasswordPage extends StatefulWidget {
@@ -172,7 +173,7 @@ class _editPasswordPageState extends State<editPasswordPage> {
       ApiService.changepw(context, _oldPassword, _password);
       // ApiService.editPassword(_password, _oldPassword);
     } else {
-      print("TODO: Password is not valid");
+      Logger.info("TODO: Password is not valid");
     }
   }
 

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:via_logger/logger.dart';
 import 'package:weatherforcast/ApiService.dart';
 import 'package:weatherforcast/managePage.dart';
 import 'package:weatherforcast/weatherPage.dart';
@@ -47,12 +49,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _controller = PageController();
     _lenght.addListener(() {
-      print("变更");
+      Logger.info("变更");
       ApiService.getNows(_lenght.value, (cb) {
-        print(cb);
+        Logger.info(cb);
         if (cb.length > 0) {
           setState(() {
-            print('全部天气' + cb.toString());
+            Logger.info('全部天气' + cb.toString());
             wData = cb;
           });
         }
@@ -75,10 +77,10 @@ class _HomePageState extends State<HomePage> {
   void autoUpdate() {
     Timer(Duration(hours: 1), () {
       ApiService.getNows(_lenght.value, (cb) {
-        print(cb);
+        Logger.info(cb);
         if (cb.length > 0) {
           setState(() {
-            print('全部天气' + cb.toString());
+            Logger.info('全部天气' + cb.toString());
             wData = cb;
           });
         }
@@ -94,14 +96,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getlocation() async {
-    print("getlocation");
+    Logger.info("getlocation");
     String str;
     await ApiService.getLocation().then((value) {
       str = '${value.latitude}:${value.longitude}';
-      print("getlocation1" + str);
+      Logger.info("getlocation1" + str);
     });
     ApiService.p(str, (List<dynamic> callback) {
-      print("获取当前城市" + callback.toString());
+      if (callback[0] == null) {
+        Fluttertoast.showToast(
+            msg: "Api 使用次数过多",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        return;
+      }
+      Logger.info("获取当前城市" + callback.toString());
       if (callback.length != 0) {
         if (_lenght.value != null &&
             _lenght.value.contains(callback[0]['location']['name'])) {
@@ -129,17 +142,36 @@ class _HomePageState extends State<HomePage> {
         _lenght.value.add(str);
         ApiService.saveCity(_lenght.value);
         ApiService.getNows(_lenght.value, (cb) {
-          print(cb);
+          Logger.info(cb);
           if (cb.length > 0) {
             setState(() {
-              print('全部天气' + cb.toString());
+              Logger.info('全部天气' + cb.toString());
               wData = cb;
             });
           }
           _controller.jumpToPage(_lenght.value.length);
         });
       });
-
+  void _set() => setState(() {
+        Logger.info('_set触发');
+        ApiService.getCity().then((value) {
+          if (value != null) {
+            _lenght.value = value;
+          }
+          if (value == null) {
+            _lenght.value = ['长沙', '北京'];
+          }
+          ApiService.getNows(_lenght.value, (cb) {
+            Logger.info(cb);
+            if (cb.length > 0) {
+              setState(() {
+                Logger.info('全部天气' + cb.toString());
+                wData = cb;
+              });
+            }
+          });
+        });
+      });
   void _remove(String name) => setState(() {
         if (_lenght.value.length > 1) {
           _lenght.value.removeWhere((element) => element == name);
@@ -159,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                   element['suggestion'] = result[0]['suggestion'];
                   element['hourly'] = result[0]['hourly'];
                 });
-                print(result);
+                Logger.info(result);
               }
             });
           }
@@ -201,7 +233,8 @@ class _HomePageState extends State<HomePage> {
                         now: i['now'],
                         hourly: i['hourly'],
                         refresh: _test),
-                  ManagePage(this._add, this._remove, this._lenght.value),
+                  ManagePage(
+                      this._set, this._add, this._remove, this._lenght.value),
                   // LoginPage()
                 ],
               ),

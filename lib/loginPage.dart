@@ -21,7 +21,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('登陆'),
-        brightness: Brightness.dark,
       ),
       body: new SingleChildScrollView(
         child: Center(

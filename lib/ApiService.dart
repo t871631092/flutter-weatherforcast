@@ -4,10 +4,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:via_logger/logger.dart';
 import 'package:weatherforcast/model/User.dart';
 
 class ApiService {
-  static String key = "S6pTS6PlJWjLCRroi"; //"SxytzgbMmIFfKL3Ck";
+  static String key = "SiDxi55cEAsRaAJYR"; //"SxytzgbMmIFfKL3Ck";
   ApiService();
   static dynamic p(str, data) async {
     if (str == 'here') {
@@ -19,16 +20,15 @@ class ApiService {
         .get(Uri.parse(
             'https://api.seniverse.com/v3/weather/now.json?key=$key&location=$str'))
         .then((value) {
-      print(value);
+      Logger.info(value);
       if (value.statusCode == 200) {
-        print("123");
+        Logger.info("123");
         result = JSON.jsonDecode(value.body)['results'][0];
       } else {
-        data(false);
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
     await http
         .get(Uri.parse(
@@ -37,11 +37,10 @@ class ApiService {
       if (value.statusCode == 200) {
         result['daily'] = JSON.jsonDecode(value.body)['results'][0]['daily'];
       } else {
-        data(false);
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
     await http
         .get(Uri.parse(
@@ -51,11 +50,10 @@ class ApiService {
         result['suggestion'] =
             JSON.jsonDecode(value.body)['results'][0]['suggestion'];
       } else {
-        data(false);
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
     await http
         .get(Uri.parse(
@@ -64,13 +62,15 @@ class ApiService {
       if (value.statusCode == 200) {
         result['hourly'] = JSON.jsonDecode(value.body)['results'][0]['hourly'];
       } else {
-        data(false);
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
-    data([result]);
+    if (result == null) {
+    } else {
+      data([result]);
+    }
   }
 
   static void getNows(List<dynamic> locations, callback) async {
@@ -95,37 +95,43 @@ class ApiService {
           'https://api.seniverse.com/v3/weather/hourly.json?key=$key&location=$e&language=zh-Hans&unit=c&start=0&hours=24'));
     }));
     List<dynamic> results = [];
-    print(list);
+    Logger.info(list);
     list.forEach((element) {
       if (element.statusCode == 200) {
         var el = JSON.jsonDecode(element.body)['results'][0];
-        list1.forEach((element1) {
-          if (element1.statusCode == 200) {
-            var el1 = JSON.jsonDecode(element1.body)['results'][0];
-            if (element.statusCode == 200 &&
-                el1['location']['name'] == el['location']['name']) {
-              el['daily'] = el1['daily'];
+        if (list1 != null) {
+          list1.forEach((element1) {
+            if (element1.statusCode == 200) {
+              var el1 = JSON.jsonDecode(element1.body)['results'][0];
+              if (element.statusCode == 200 &&
+                  el1['location']['name'] == el['location']['name']) {
+                el['daily'] = el1['daily'];
+              }
             }
-          }
-        });
-        list2.forEach((element2) {
-          if (element2.statusCode == 200) {
-            var el2 = JSON.jsonDecode(element2.body)['results'][0];
-            if (element.statusCode == 200 &&
-                el2['location']['name'] == el['location']['name']) {
-              el['suggestion'] = el2['suggestion'];
+          });
+        }
+        if (list2 != null) {
+          list2.forEach((element2) {
+            if (element2.statusCode == 200) {
+              var el2 = JSON.jsonDecode(element2.body)['results'][0];
+              if (element.statusCode == 200 &&
+                  el2['location']['name'] == el['location']['name']) {
+                el['suggestion'] = el2['suggestion'];
+              }
             }
-          }
-        });
-        list3.forEach((element3) {
-          if (element3.statusCode == 200) {
-            var el3 = JSON.jsonDecode(element3.body)['results'][0];
-            if (element.statusCode == 200 &&
-                el3['location']['name'] == el['location']['name']) {
-              el['hourly'] = el3['hourly'];
+          });
+        }
+        if (list3 != null) {
+          list3.forEach((element3) {
+            if (element3.statusCode == 200) {
+              var el3 = JSON.jsonDecode(element3.body)['results'][0];
+              if (element.statusCode == 200 &&
+                  el3['location']['name'] == el['location']['name']) {
+                el['hourly'] = el3['hourly'];
+              }
             }
-          }
-        });
+          });
+        }
         results.add(el);
       }
     });
@@ -133,13 +139,17 @@ class ApiService {
   }
 
   static void searchLocation(String location, callback) async {
-    http.Response result = await http.get(Uri.parse(
-        'https://api.seniverse.com/v3/location/search.json?key=$key&q=$location'));
-    if (result.statusCode == 200) {
-      callback(JSON.jsonDecode(result.body)['results']);
-    } else {
-      callback([]);
-    }
+    Logger.info(location);
+    await http
+        .get(Uri.parse(
+            'https://api.seniverse.com/v3/location/search.json?key=$key&q=${location.trim()}'))
+        .then((result) {
+      if (result.statusCode == 200) {
+        callback(JSON.jsonDecode(result.body)['results']);
+      } else {
+        callback([]);
+      }
+    });
   }
 
   static Future<Position> getLocation() async {
@@ -200,24 +210,33 @@ class ApiService {
       if (value.statusCode == 200) {
         if (value.headers['set-cookie'] != null) {
           var result = JSON.jsonDecode(value.body);
-          print(result);
+          Logger.info(result['data']);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString('cookie', value.headers['set-cookie']);
           if ((result['data']['locations'] as List).isNotEmpty) {
             sharedPreferences.setStringList(
-                'citys', result['data']['locations'].cast<String>());
+                'citys', (result['data']['locations'].cast<String>()));
           }
           sharedPreferences.setString('nickname', result['data']['nickname']);
-          print('login成功');
+          Logger.info('login成功');
           Global.eventBus.fire(User(true));
           Navigator.pop(context, true);
+        } else {
+          Fluttertoast.showToast(
+              msg: JSON.jsonDecode(value.body)['msg'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
         }
       } else {
         return false;
       }
     }).catchError((onError) {
-      print("error login");
+      Logger.info("error login");
     });
   }
 
@@ -231,7 +250,7 @@ class ApiService {
         headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
         var result = JSON.jsonDecode(value.body);
-        print(result['data']['locations']);
+        Logger.info(result['data']['locations']);
         if (result['success']) {
           if ((result['data']['locations'] as List).isNotEmpty) {
             sharedPreferences.setStringList(
@@ -242,18 +261,26 @@ class ApiService {
         } else {
           sharedPreferences.remove('cookie');
           sharedPreferences.remove('nickname');
+          Fluttertoast.showToast(
+              msg: JSON.jsonDecode(value.body)['msg'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
         }
       }
     }).catchError((onError) {
-      print("error islogin");
-      print(onError);
+      Logger.info("error islogin");
+      Logger.info(onError);
       return false;
     });
     return false;
   }
 
   static void logout() async {
-    print("api.logout()");
+    Logger.info("api.logout()");
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = '';
     if (sharedPreferences.containsKey('cookie')) {
@@ -266,22 +293,31 @@ class ApiService {
         if (result['success']) {
           sharedPreferences.remove('cookie');
           sharedPreferences.remove('nickname');
-          print('登出成功');
-          print(sharedPreferences.containsKey('nickname'));
-          print(sharedPreferences.containsKey('cookie'));
+          Logger.info('登出成功');
+          Logger.info(sharedPreferences.containsKey('nickname'));
+          Logger.info(sharedPreferences.containsKey('cookie'));
           Global.eventBus.fire(User(false));
-          print('登出成功end');
-        } else {}
+          Logger.info('登出成功end');
+        } else {
+          Fluttertoast.showToast(
+              msg: JSON.jsonDecode(value.body)['msg'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
       } else {
         return false;
       }
     }).catchError((onError) {
-      print("logout error");
+      Logger.info("logout error");
     });
   }
 
   static void register(content, username, password, nickname, email) async {
-    print(username + password + nickname + email);
+    Logger.info(username + password + nickname + email);
     await http.post(Uri.parse('http://192.168.199.140:8088/account/register'),
         body: {
           'username': username,
@@ -292,10 +328,19 @@ class ApiService {
       if (value.statusCode == 200) {
         if (JSON.jsonDecode(value.body)['success']) {
           Navigator.pop(content);
-        } else {}
+        } else {
+          Fluttertoast.showToast(
+              msg: JSON.jsonDecode(value.body)['msg'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
       } else {}
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
   }
 
@@ -325,7 +370,7 @@ class ApiService {
         return false;
       }
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
   }
 
@@ -344,7 +389,7 @@ class ApiService {
           Navigator.pop(content);
         } else {
           Fluttertoast.showToast(
-              msg: "提示信息",
+              msg: JSON.jsonDecode(value.body)['msg'],
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
@@ -354,7 +399,7 @@ class ApiService {
         }
       } else {}
     }).catchError((onError) {
-      print("error");
+      Logger.info("error");
     });
   }
 }

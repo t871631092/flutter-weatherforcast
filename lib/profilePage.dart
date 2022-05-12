@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:via_logger/logger.dart';
 import 'package:weatherforcast/ApiService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weatherforcast/editPasswordPage.dart';
@@ -12,6 +13,19 @@ class profilePage extends StatefulWidget {
 }
 
 class _profilePageState extends State<profilePage> {
+  String username = '';
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((value) {
+      setState(() {
+        // widget = _buildUsername();
+        username = value.getString('nickname');
+      });
+      Logger.info(username);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +46,10 @@ class _profilePageState extends State<profilePage> {
               SizedBox(
                 height: 15,
               ),
-              _buildUsername(),
+              Text(username,
+                  style: TextStyle(
+                    fontSize: 35,
+                  )),
               SizedBox(
                 height: 60,
               ),
@@ -50,19 +67,6 @@ class _profilePageState extends State<profilePage> {
       // backgroundImage: AssetImage('lib/assets/defaultUserAvatar.png'),
       radius: 60.0,
     );
-  }
-
-  Widget _buildUsername() {
-    var username = 'username';
-    _getUsername().then((value) {
-      if (value != null) {
-        username = value;
-      }
-    });
-    return Text(username,
-        style: TextStyle(
-          fontSize: 35,
-        ));
   }
 
   Widget _buildEditPasswordButton() {
@@ -119,10 +123,5 @@ class _profilePageState extends State<profilePage> {
         },
       ),
     );
-  }
-
-  Future<String> _getUsername() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getString('nickname');
   }
 }

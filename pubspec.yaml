@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.0.5
   event_bus: ^2.0.0
   fluttertoast: ^8.0.7
+  via_logger: 1.0.4
   # fl_chart: ^0.50.1
 
 dev_dependencies:

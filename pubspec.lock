@@ -623,6 +623,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0"
+  via_logger:
+    dependency: "direct main"
+    description:
+      name: via_logger
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.4"
   watcher:
     dependency: transitive
     description:

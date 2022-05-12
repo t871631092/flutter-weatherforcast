@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:via_logger/logger.dart';
 
 class WeatherPage extends StatefulWidget {
   final String location;
@@ -28,8 +29,7 @@ class _WeatherPage extends State<WeatherPage> {
   bool isOK = true;
 
   void initState() {
-    print("initState");
-    print(widget.now);
+    Logger.info("initState");
     super.initState();
     _scrollViewController = ScrollController(initialScrollOffset: 0.0);
     _scrollViewController.addListener(changeColor);
