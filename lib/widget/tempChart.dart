@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 class tempChart extends StatefulWidget {
   final dynamic data;
 
-  const tempChart(
-  {
-    Key key, this.data
-  }
-  ): super(key: key);
+  const tempChart({Key key, this.data}) : super(key: key);
 
   @override
   _tempChartState createState() => _tempChartState();
@@ -23,19 +19,20 @@ class _tempChartState extends State<tempChart> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.hardEdge,
       children: <Widget>[
         AspectRatio(
           aspectRatio: 8,
           child: Container(
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(18),
-                ),
-                // color: Color(0xff232d37)
+              borderRadius: BorderRadius.all(
+                Radius.circular(18),
+              ),
+              // color: Color(0xff232d37)
             ),
             child: Padding(
-              padding: const EdgeInsets.only(
-                  right: 20.0, left: 20.0),
+              padding:
+                  const EdgeInsets.only(bottom: 0, right: 20.0, left: 20.0),
               child: LineChart(
                 mainData(),
               ),
@@ -50,9 +47,7 @@ class _tempChartState extends State<tempChart> {
     int index = value.toInt();
     var item = widget.data[index];
     const isOK = true;
-
-    Widget w = Flex(
-      direction: Axis.vertical,
+    Widget w = Column(
       children: [
         Text('${item['temperature']}°'),
         Image(
@@ -60,17 +55,12 @@ class _tempChartState extends State<tempChart> {
             height: 25,
             image: AssetImage(isOK
                 ? 'lib/assets/${item['code']}@2x.png'
-                : 'lib/assets/99@2x.png')
-        ),
-        SizedBox(height: 10),
-        Text('${item['text']} '),
+                : 'lib/assets/99@2x.png')),
+        // Text('${item['text']} '),
       ],
     );
 
-    return Container(
-      child: w,
-      height: 300,
-    );
+    return Container(child: w, height: 200);
   }
 
   Widget topTitleWidgets(double value, TitleMeta meta) {
@@ -78,7 +68,7 @@ class _tempChartState extends State<tempChart> {
       fontWeight: FontWeight.bold,
       fontSize: 16,
     );
-    var first = widget.data[0]['time'].substring(11,13);
+    var first = widget.data[0]['time'].substring(11, 13);
     int index = value.toInt();
     var realHour = index + int.parse(first);
     realHour = realHour % 24;
@@ -103,10 +93,10 @@ class _tempChartState extends State<tempChart> {
         ),
         topTitles: AxisTitles(
           sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 23,
-              interval: 1,
-              getTitlesWidget: topTitleWidgets,
+            showTitles: true,
+            reservedSize: 23,
+            interval: 1,
+            getTitlesWidget: topTitleWidgets,
           ),
         ),
         bottomTitles: AxisTitles(
@@ -119,10 +109,18 @@ class _tempChartState extends State<tempChart> {
         ),
       ),
       borderData: FlBorderData(
-          show: false,
+        show: false,
       ),
-      maxY: double.parse(widget.data.reduce((a, b) => int.parse(a['temperature']) > int.parse(b['temperature']) ? a : b)['temperature']) + 2,
-      minY: double.parse(widget.data.reduce((a, b) => int.parse(a['temperature']) < int.parse(b['temperature']) ? a : b)['temperature']) - 2,
+      maxY: double.parse(widget.data.reduce((a, b) =>
+              int.parse(a['temperature']) > int.parse(b['temperature'])
+                  ? a
+                  : b)['temperature']) +
+          2,
+      minY: double.parse(widget.data.reduce((a, b) =>
+              int.parse(a['temperature']) < int.parse(b['temperature'])
+                  ? a
+                  : b)['temperature']) -
+          2,
       lineBarsData: [
         LineChartBarData(
           spots: _buildFlSpot(widget.data),

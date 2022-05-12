@@ -185,19 +185,22 @@ class _WeatherPage extends State<WeatherPage> {
     }
     for (var item in data) {
       list.add(Container(
-        height: 45,
+        height: 80,
         width: 50,
         child: Flex(
           direction: Axis.vertical,
           children: [
-            Text('${item['time'].toString().substring(11, 13)}'),
+            Text('${item['time'].toString().substring(11, 13)}日'),
+            SizedBox(height: 5),
             Image(
                 width: 25,
                 height: 25,
                 image: AssetImage(isOK
                     ? 'lib/assets/${item['code']}@2x.png'
                     : 'lib/assets/99@2x.png')),
+            SizedBox(height: 5),
             Text('${item['temperature']}°'),
+            SizedBox(height: 5),
             Text('${item['text']} '),
           ],
         ),
@@ -263,24 +266,49 @@ class _WeatherPage extends State<WeatherPage> {
               },
               child: ListView(
                 children: [
-                  // Container(
-                  //     padding: EdgeInsets.only(top: 0, bottom: 20),
-                  //     height: 100,
-                  //     child: ListView(
-                  //       scrollDirection: Axis.horizontal,
-                  //       children: _build24h(widget.hourly),
-                  //     )
-                  // ),
-                  SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                        width: 1200,
-                        height: 230,
-                        child: tempChart(data: widget.hourly),
+                  Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.white.withOpacity(0.15),
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 1.0,
+                              spreadRadius: 1.0),
+                        ],
+                        borderRadius: new BorderRadius.circular((5.0)),
+                      ),
+                      margin:
+                          EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+                      padding:
+                          EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+                      height: 120,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: _build24h(widget.hourly),
                       )),
+                  // SingleChildScrollView(
+                  //     scrollDirection: Axis.horizontal,
+                  //     child: Container(
+                  //       width: 1200,
+                  //       height: 180,
+                  //       child: tempChart(data: widget.hourly),
+                  //     )),
                   // tempChart(),
                   Container(
-                      padding: EdgeInsets.only(top: 0, bottom: 20),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.white.withOpacity(0.15),
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 1.0,
+                              spreadRadius: 1.0),
+                        ],
+                        borderRadius: new BorderRadius.circular((5.0)),
+                      ),
+                      margin: EdgeInsets.only(
+                          top: 5, bottom: 20, left: 5, right: 5),
+                      padding:
+                          EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
                       child: Column(
                         children: getDaily(widget.daily),
                       )),
