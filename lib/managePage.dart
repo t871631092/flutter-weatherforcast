@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:weatherforcast/ApiService.dart';
 import 'package:weatherforcast/loginPage.dart';
+import 'package:weatherforcast/model/User.dart';
 import 'package:weatherforcast/profilePage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class ManagePage extends StatefulWidget {
   final _add;
@@ -15,6 +15,8 @@ class ManagePage extends StatefulWidget {
 }
 
 class _ManagePage extends State<ManagePage> {
+  Widget _LoginButton;
+
   @override
   void initState() {
     super.initState();
@@ -22,6 +24,15 @@ class _ManagePage extends State<ManagePage> {
       print(cb);
     });
     ApiService.islogin();
+    _LoginButton = _buildBarButton(false);
+    checkIsLogin();
+    Global.eventBus.on<User>().listen((event) {
+      print('event.islogin');
+      print(event.islogin);
+      setState(() {
+        _LoginButton = _buildBarButton(event.islogin);
+      });
+    });
   }
 
   List<dynamic> search_list = [];
@@ -161,7 +172,7 @@ class _ManagePage extends State<ManagePage> {
         appBar: AppBar(
           title: Text("城市管理"),
           actions: <Widget>[
-            _buildBarButton(),
+            _LoginButton,
           ],
         ),
         body: Column(
@@ -273,9 +284,7 @@ class _ManagePage extends State<ManagePage> {
     }
   }
 
-  Widget _buildBarButton() {
-    bool isLogin = true;
-    checkIsLogin().then((value) => isLogin = value);
+  Widget _buildBarButton(isLogin) {
     if (isLogin) {
       return ElevatedButton(
         child: Text("用户"),
@@ -285,7 +294,7 @@ class _ManagePage extends State<ManagePage> {
             MaterialPageRoute(builder: (context) {
               return profilePage();
             }),
-          );
+          ).then((value) => value ? checkIsLogin() : null);
         },
       );
     } else {
@@ -303,8 +312,10 @@ class _ManagePage extends State<ManagePage> {
     }
   }
 
-  Future<bool> checkIsLogin() async {
+  Future<void> checkIsLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('nickname') != null;
+    print('checkIsLogin');
+    print(prefs.containsKey('cookie'));
+    _LoginButton = _buildBarButton(prefs.containsKey('cookie'));
   }
 }

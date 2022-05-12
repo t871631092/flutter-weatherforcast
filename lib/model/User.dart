@@ -1,6 +1,10 @@
+import 'package:event_bus/event_bus.dart';
+
 class User {
-  String id;
-  String username;
-  String password;
-  User(this.id, this.username, this.password);
+  bool islogin;
+  User(this.islogin);
+}
+
+class Global {
+  static EventBus eventBus = EventBus();
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:weatherforcast/ApiService.dart';
-import 'package:weatherforcast/loginPage.dart';
 import 'package:weatherforcast/managePage.dart';
 import 'package:weatherforcast/weatherPage.dart';
 import 'dart:ui';

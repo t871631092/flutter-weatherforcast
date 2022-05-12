@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
           '登陆',
         ),
         onPressed: () {
-          ApiService.login(_username.trim(), _password.trim());
+          ApiService.login(_username.trim(), _password.trim(), context);
         },
       ),
     );

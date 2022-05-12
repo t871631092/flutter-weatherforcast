@@ -1,8 +1,10 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as JSON;
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weatherforcast/model/User.dart';
 
 class ApiService {
   static String key = "S6pTS6PlJWjLCRroi"; //"SxytzgbMmIFfKL3Ck";
@@ -30,7 +32,7 @@ class ApiService {
     });
     await http
         .get(Uri.parse(
-            'https://api.seniverse.com/v3/weather/daily.json?key=$key&location=$str&language=zh-Hans&unit=c&start=0&days=5'))
+            'https://api.seniverse.com/v3/weather/daily.json?key=$key&location=$str&language=zh-Hans&unit=c&start=0&days=7'))
         .then((value) {
       if (value.statusCode == 200) {
         result['daily'] = JSON.jsonDecode(value.body)['results'][0]['daily'];
@@ -80,7 +82,7 @@ class ApiService {
     //预报
     List<http.Response> list1 = await Future.wait(locations.map((e) {
       return http.get(Uri.parse(
-          'https://api.seniverse.com/v3/weather/daily.json?key=$key&location=$e&language=zh-Hans&unit=c&start=0&days=5'));
+          'https://api.seniverse.com/v3/weather/daily.json?key=$key&location=$e&language=zh-Hans&unit=c&start=0&days=7'));
     }));
     //生活
     List<http.Response> list2 = await Future.wait(locations.map((e) {
@@ -192,22 +194,24 @@ class ApiService {
     }
   }
 
-  static void login(username, password) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var token = '';
-    if (sharedPreferences.containsKey('cookie')) {
-      token = sharedPreferences.getString('cookie');
-    }
+  static void login(username, password, context) async {
     await http.post(Uri.parse('http://192.168.199.140:8088/account/login'),
-        body: {'username': username, 'password': password},
-        headers: {'Cookie': token}).then((value) async {
+        body: {'username': username, 'password': password}).then((value) async {
       if (value.statusCode == 200) {
         if (value.headers['set-cookie'] != null) {
+          var result = JSON.jsonDecode(value.body);
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString('cookie', value.headers['set-cookie']);
+          if ((result['data']['locations'] as List).isNotEmpty) {
+            sharedPreferences.setStringList(
+                'citys', result['data']['locations']);
+          }
+          sharedPreferences.setString('nickname', result['data']['nickname']);
+          print('login成功');
+          Global.eventBus.fire(User(true));
+          Navigator.pop(context, true);
         }
-        print(value.headers['set-cookie']);
       } else {
         return false;
       }
@@ -258,6 +262,11 @@ class ApiService {
         if (result['success']) {
           sharedPreferences.remove('cookie');
           sharedPreferences.remove('nickname');
+          print('登出成功');
+          print(sharedPreferences.containsKey('nickname'));
+          print(sharedPreferences.containsKey('cookie'));
+          Global.eventBus.fire(User(false));
+          print('登出成功end');
         } else {}
       } else {
         return false;
