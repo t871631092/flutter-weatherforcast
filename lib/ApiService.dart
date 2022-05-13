@@ -9,6 +9,7 @@ import 'package:weatherforcast/model/User.dart';
 
 class ApiService {
   static String key = "SiDxi55cEAsRaAJYR"; //"SxytzgbMmIFfKL3Ck";
+  static String host = "http://192.168.199.140:8088";
   ApiService();
   static dynamic p(str, data) async {
     if (str == 'here') {
@@ -205,7 +206,7 @@ class ApiService {
   }
 
   static void login(username, password, context) async {
-    await http.post(Uri.parse('http://192.168.199.140:8088/account/login'),
+    await http.post(Uri.parse('$host/account/login'),
         body: {'username': username, 'password': password}).then((value) async {
       if (value.statusCode == 200) {
         if (value.headers['set-cookie'] != null) {
@@ -246,7 +247,7 @@ class ApiService {
     if (sharedPreferences.containsKey('cookie')) {
       token = sharedPreferences.getString('cookie');
     }
-    await http.get(Uri.parse('http://192.168.199.140:8088/account/islogin'),
+    await http.get(Uri.parse('$host/account/islogin'),
         headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
         var result = JSON.jsonDecode(value.body);
@@ -286,7 +287,7 @@ class ApiService {
     if (sharedPreferences.containsKey('cookie')) {
       token = sharedPreferences.getString('cookie');
     }
-    await http.get(Uri.parse('http://192.168.199.140:8088/account/logout'),
+    await http.get(Uri.parse('$host/account/logout'),
         headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
         var result = JSON.jsonDecode(value.body);
@@ -316,17 +317,26 @@ class ApiService {
     });
   }
 
-  static void register(content, username, password, nickname, email) async {
-    Logger.info(username + password + nickname + email);
-    await http.post(Uri.parse('http://192.168.199.140:8088/account/register'),
-        body: {
-          'username': username,
-          'password': password,
-          'email': email,
-          'nickname': nickname
-        }).then((value) async {
+  static void register(
+      content, username, password, nickname, email, verify) async {
+    Logger.info(username + password + nickname + email + verify);
+    await http.post(Uri.parse('$host/account/register'), body: {
+      'username': username,
+      'password': password,
+      'email': email,
+      'nickname': nickname,
+      'verify': verify
+    }).then((value) async {
       if (value.statusCode == 200) {
         if (JSON.jsonDecode(value.body)['success']) {
+          Fluttertoast.showToast(
+              msg: JSON.jsonDecode(value.body)['msg'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0);
           Navigator.pop(content);
         } else {
           Fluttertoast.showToast(
@@ -360,8 +370,7 @@ class ApiService {
         city += e;
       }
     });
-    await http.post(
-        Uri.parse('http://192.168.199.140:8088/account/saveaddress'),
+    await http.post(Uri.parse('$host/account/saveaddress'),
         body: {'locations': city},
         headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
@@ -380,8 +389,7 @@ class ApiService {
     if (sharedPreferences.containsKey('cookie')) {
       token = sharedPreferences.getString('cookie');
     }
-    await http.post(
-        Uri.parse('http://192.168.199.140:8088/account/changepassword'),
+    await http.post(Uri.parse('$host/account/changepassword'),
         body: {'old': old, 'pw': pw},
         headers: {'Cookie': token}).then((value) async {
       if (value.statusCode == 200) {
@@ -397,6 +405,24 @@ class ApiService {
               textColor: Colors.white,
               fontSize: 16.0);
         }
+      } else {}
+    }).catchError((onError) {
+      Logger.info("error");
+    });
+  }
+
+  static void sendEmail(email) async {
+    await http.post(Uri.parse('$host/account/sendemail'),
+        body: {'email': email}).then((value) async {
+      if (value.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: JSON.jsonDecode(value.body)['msg'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
       } else {}
     }).catchError((onError) {
       Logger.info("error");

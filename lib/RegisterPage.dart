@@ -12,9 +12,10 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   //TextEditingController可以使用 text 属性指定初始值
   TextEditingController _usernameController = TextEditingController();
+  TextEditingController _verifyController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  String _username = '', _password = '', _email = '';
+  String _username = '', _password = '', _email = '', _verify = '';
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,10 @@ class _RegisterPageState extends State<RegisterPage> {
                 height: 60,
               ),
               _getMailInput(),
+              _getEmailButton(),
               _getUsernameInput(),
               _getPasswordInput(),
+              _getVerifyInput(),
               SizedBox(
                 height: 10,
               ),
@@ -77,6 +80,41 @@ class _RegisterPageState extends State<RegisterPage> {
       onChanged: (value) {
         this.setState(() {
           _email = value;
+        });
+      },
+    );
+  }
+
+  Widget _getVerifyInput() {
+    return _getInputTextField(
+      TextInputType.text,
+      controller: _verifyController,
+      decoration: InputDecoration(
+        hintText: "输入验证码",
+        icon: Icon(
+          Icons.mobile_friendly_rounded,
+          size: 20.0,
+        ),
+        border: InputBorder.none,
+        //使用 GestureDetector 实现手势识别
+        suffixIcon: GestureDetector(
+          child: Offstage(
+            child: Icon(Icons.clear),
+            offstage: _email == '',
+          ),
+          //点击清除文本框内容
+          onTap: () {
+            this.setState(() {
+              _verify = '';
+              _verifyController.clear();
+            });
+          },
+        ),
+      ),
+      //使用 onChanged 完成双向绑定
+      onChanged: (value) {
+        this.setState(() {
+          _verify = value;
         });
       },
     );
@@ -185,7 +223,32 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         onPressed: () {
           ApiService.register(context, _username.trim(), _password.trim(),
-              _username.trim(), _email.trim());
+              _username.trim(), _email.trim(), _verify.trim());
+        },
+      ),
+    );
+  }
+
+  Widget _getEmailButton() {
+    return Container(
+      height: 50,
+      width: double.infinity,
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: TextButton(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(Theme.of(context).primaryColor),
+        ),
+        child: Text(
+          '发送邮件',
+        ),
+        onPressed: () {
+          ApiService.sendEmail(_email.trim());
         },
       ),
     );
