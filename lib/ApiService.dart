@@ -205,7 +205,29 @@ class ApiService {
     }
   }
 
-  static void login(username, password, context) async {
+  static void login(String username, String password, context) async {
+    if (username.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入用户名',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    if (password.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入密码',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
     await http.post(Uri.parse('$host/account/login'),
         body: {'username': username, 'password': password}).then((value) async {
       if (value.statusCode == 200) {
@@ -317,9 +339,64 @@ class ApiService {
     });
   }
 
-  static void register(
-      content, username, password, nickname, email, verify) async {
+  static void register(content, String username, String password,
+      String nickname, String email, String verify) async {
     Logger.info(username + password + nickname + email + verify);
+    if (username.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入用户名',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    if (password.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入密码',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    if (nickname.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入用户名',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    if (email.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入邮箱',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    if (verify.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入验证码',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
     await http.post(Uri.parse('$host/account/register'), body: {
       'username': username,
       'password': password,
@@ -411,7 +488,18 @@ class ApiService {
     });
   }
 
-  static void sendEmail(email) async {
+  static void sendEmail(String email) async {
+    if (email.isEmpty) {
+      Fluttertoast.showToast(
+          msg: '请输入邮箱',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
     await http.post(Uri.parse('$host/account/sendemail'),
         body: {'email': email}).then((value) async {
       if (value.statusCode == 200) {
